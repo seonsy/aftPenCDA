@@ -1,3 +1,4 @@
+#' @export
 BAR_threshold <- function(resid, lambda, n) {
   if (resid <= 2 * sqrt(lambda / n) && resid >= -2 * sqrt(lambda / n)) {
     0
@@ -5,7 +6,7 @@ BAR_threshold <- function(resid, lambda, n) {
     resid / 2 + sqrt(resid^2 / 4 - lambda / n)
   }
 }
-
+#' @export
 Soft <- function(z, lambda) {
   dplyr::case_when(
     z >  lambda ~ z - lambda,
@@ -14,6 +15,7 @@ Soft <- function(z, lambda) {
   )
 }
 
+#' @export
 aftPenCDA <- function(dt, lambda, se, type, r = 3.7, eps = 1e-8, max.iter = 100) {
   fit  <- is_aft_cpp(dt$y, dt$d, as.matrix(dt[, -c(1, 2)]), se)
   init <- fit$beta
