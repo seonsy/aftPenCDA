@@ -1,11 +1,24 @@
 Package: aftPenCDA
-Title: What the Package Does (One Line, Title Case)
+Title: Penalized AFT Estimation via Coordinate Descent
 Version: 0.0.0.9000
-Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+Authors@R: c(
+    person(given = "Seon", family = "Suyeon",
+           role = c("aut", "cre"),
+           email = "seonsy429@gmail.com"),
+    person(given = "Taehwa", family = "Choi",
+           role = c("aut"),
+           email = "taehwa015@gmail.com")
+    )
+Maintainer: Suyeon Seon <seonsy429@gmail.com>
+Description: Provides penalized accelerated failure time (AFT) model estimation
+    for right-censored and partly interval-censored survival data using induced
+    smoothing and coordinate descent algorithms. Supported penalties include
+    broken adaptive ridge (BAR), LASSO, adaptive LASSO, and SCAD. Core
+    estimation routines are implemented in C++ via Rcpp and RcppArmadillo for
+    computational efficiency.
+URL: https://github.com/seonsy/aftPenCDA
+BugReports: https://github.com/seonsy/aftPenCDA/issues
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
@@ -13,4 +26,5 @@ LinkingTo:
     Rcpp,
     RcppArmadillo
 Imports: 
-    Rcpp
+    Rcpp,
+    stats

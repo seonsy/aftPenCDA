@@ -3,4 +3,6 @@
 export(aftpen)
 export(aftpen_pic)
 importFrom(Rcpp,evalCpp)
+importFrom(stats,coef)
+importFrom(stats,lm)
 useDynLib(aftPenCDA, .registration = TRUE)
