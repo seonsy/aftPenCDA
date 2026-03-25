@@ -25,20 +25,22 @@ columns are treated as covariates.}
 \item{lambda}{A nonnegative tuning parameter controlling the amount of
 penalization.}
 
-\item{se}{A character string specifying the variance-estimation option
-used in the underlying Rcpp routine \code{is_aftp_cpp()}.}
+\item{se}{A character string specifying the variance estimation method.
+\describe{
+\item{"CF"}{Closed-form (analytic plug-in) variance estimator based on the estimating function.}
+\item{"ZL"}{Perturbation-resampling variance estimator following Zeng and Lin (2008).}
+}}
 
-\item{type}{Penalty type. One of \code{"BAR"}, \code{"LASSO"},
-\code{"ALASSO"}, or \code{"SCAD"}.}
+\item{type}{Penalty type. One of \code{"BAR"}, \code{"LASSO"}, \code{"ALASSO"}, or \code{"SCAD"}.}
 
-\item{r}{A positive tuning constant used in the SCAD penalty. Ignored
-unless \code{type = "SCAD"}.}
+\item{r}{A positive tuning constant used in the SCAD penalty. Ignored unless
+\code{type = "SCAD"}. The default is \code{3.7}.}
 
-\item{eps}{Convergence tolerance for the outer penalized coordinate
-descent iterations.}
+\item{eps}{Convergence tolerance for the outer penalized coordinate descent
+iterations. The default is \code{1e-8}.}
 
 \item{max.iter}{Maximum number of iterations for the outer penalized
-coordinate descent algorithm.}
+coordinate descent algorithm. The default is \code{100}.}
 }
 \value{
 A list containing the following components:
@@ -78,10 +80,6 @@ penalized updates.
 For \code{type = "BAR"}, the update uses the internal
 \code{BAR_threshold()} operator. For \code{"LASSO"},
 \code{"ALASSO"}, and \code{"SCAD"}, soft-thresholding-based updates are used.
-
-Note that \code{eps} and \code{max.iter} control only the outer penalized
-iteration in \code{aftpen_pic()}; they do not control the internal stopping
-rule used inside \code{is_aftp_cpp()}.
 }
 \examples{
 \dontrun{

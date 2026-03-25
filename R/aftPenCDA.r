@@ -50,18 +50,19 @@ Soft <- function(z, lambda) {
 #'   right-censoring). The remaining columns are treated as covariates.
 #' @param lambda A nonnegative tuning parameter controlling the amount of
 #'   penalization.
-#' @param se A character string specifying the variance-estimation option used
-#'   in the underlying Rcpp routine \code{is_aft_cpp()}. In the current backend,
-#'   \code{"ZL"} and non-\code{"ZL"} inputs may trigger different variance
-#'   calculation branches.
+#' @param se A character string specifying the variance estimation method.
+#'   \describe{
+#'     \item{"CF"}{Closed-form (plug-in) variance estimator based on the analytic expression of the estimating function (see Equation (6)).}
+#'     \item{"ZL"}{Perturbation-based variance estimator using the resampling approach of Zeng and Lin (2008).}
+#'   }
 #' @param type Penalty type. One of \code{"BAR"}, \code{"LASSO"},
 #'   \code{"ALASSO"}, or \code{"SCAD"}.
 #' @param r A positive tuning constant used in the SCAD penalty. Ignored unless
-#'   \code{type = "SCAD"}.
+#'   \code{type = "SCAD"}. The default is \code{3.7}.
 #' @param eps Convergence tolerance for the outer penalized coordinate descent
-#'   iterations.
+#'   iterations. The default is \code{1e-8}.
 #' @param max.iter Maximum number of iterations for the outer penalized
-#'   coordinate descent algorithm.
+#'   coordinate descent algorithm. The default is \code{100}.
 #'
 #' @return A list containing the following components:
 #' \itemize{
@@ -78,10 +79,6 @@ Soft <- function(z, lambda) {
 #'
 #' For \code{type = "BAR"}, the update uses the internal \code{BAR_threshold()} operator.
 #' For \code{type = "LASSO"}, \code{"ALASSO"}, and \code{"SCAD"}, soft-thresholding-based updates are used.
-#'
-#' Note that \code{eps} and \code{max.iter} control only the outer penalized iteration in \code{aftpen()};
-#' they do not control the internal stopping rule used inside \code{is_aft_cpp()}.
-#'
 #' @examples
 #' \dontrun{
 #' n = 100
@@ -195,16 +192,18 @@ aftpen <- function(dt, lambda, se, type = c("BAR", "LASSO", "ALASSO", "SCAD"), r
 #'   columns are treated as covariates.
 #' @param lambda A nonnegative tuning parameter controlling the amount of
 #'   penalization.
-#' @param se A character string specifying the variance-estimation option
-#'   used in the underlying Rcpp routine \code{is_aftp_cpp()}.
-#' @param type Penalty type. One of \code{"BAR"}, \code{"LASSO"},
-#'   \code{"ALASSO"}, or \code{"SCAD"}.
-#' @param r A positive tuning constant used in the SCAD penalty. Ignored
-#'   unless \code{type = "SCAD"}.
-#' @param eps Convergence tolerance for the outer penalized coordinate
-#'   descent iterations.
+#' @param se A character string specifying the variance estimation method.
+#'   \describe{
+#'     \item{"CF"}{Closed-form (analytic plug-in) variance estimator based on the estimating function.}
+#'     \item{"ZL"}{Perturbation-resampling variance estimator following Zeng and Lin (2008).}
+#'   }
+#' @param type Penalty type. One of \code{"BAR"}, \code{"LASSO"}, \code{"ALASSO"}, or \code{"SCAD"}.
+#' @param r A positive tuning constant used in the SCAD penalty. Ignored unless
+#'   \code{type = "SCAD"}. The default is \code{3.7}.
+#' @param eps Convergence tolerance for the outer penalized coordinate descent
+#'   iterations. The default is \code{1e-8}.
 #' @param max.iter Maximum number of iterations for the outer penalized
-#'   coordinate descent algorithm.
+#'   coordinate descent algorithm. The default is \code{100}.
 #'
 #' @return A list containing the following components:
 #' \itemize{
@@ -238,10 +237,6 @@ aftpen <- function(dt, lambda, se, type = c("BAR", "LASSO", "ALASSO", "SCAD"), r
 #' For \code{type = "BAR"}, the update uses the internal
 #' \code{BAR_threshold()} operator. For \code{"LASSO"},
 #' \code{"ALASSO"}, and \code{"SCAD"}, soft-thresholding-based updates are used.
-#'
-#' Note that \code{eps} and \code{max.iter} control only the outer penalized
-#' iteration in \code{aftpen_pic()}; they do not control the internal stopping
-#' rule used inside \code{is_aftp_cpp()}.
 #' @examples
 #' \dontrun{
 #' set.seed(1)
@@ -316,7 +311,7 @@ aftpen <- function(dt, lambda, se, type = c("BAR", "LASSO", "ALASSO", "SCAD"), r
 aftpen_pic <- function(dt, lambda, se,
                          type = c("BAR", "LASSO", "ALASSO", "SCAD"), r = 3.7, eps = 1e-8, max.iter = 100) {
   type <- match.arg(type)
-  fit  <- is_aftp_cpp(dt, se)
+  fit  <- is_aftp_pic_cpp(dt, se)
   init <- fit$beta
   h    <- fit$hess
   g    <- fit$grad

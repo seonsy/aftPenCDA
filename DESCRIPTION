@@ -18,7 +18,7 @@ Description: Provides penalized accelerated failure time (AFT) model estimation
     computational efficiency.
 URL: https://github.com/seonsy/aftPenCDA
 BugReports: https://github.com/seonsy/aftPenCDA/issues
-License: MIT + file LICENSE
+License: GPL-3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
@@ -26,5 +26,9 @@ LinkingTo:
     Rcpp,
     RcppArmadillo
 Imports: 
+    dplyr,
     Rcpp,
     stats
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
