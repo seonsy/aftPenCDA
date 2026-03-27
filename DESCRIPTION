@@ -1,8 +1,8 @@
 Package: aftPenCDA
 Title: Penalized AFT Estimation via Coordinate Descent
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: c(
-    person(given = "Seon", family = "Suyeon",
+    person(given = "Suyeon", family = "Seon",
            role = c("aut", "cre"),
            email = "seonsy429@gmail.com"),
     person(given = "Taehwa", family = "Choi",
