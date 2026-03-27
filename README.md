@@ -72,9 +72,7 @@ aftpen_pic(dt, lambda = 0.1, se = "CF", type = "BAR")
 The method combines induced smoothing with a coordinate descent algorithm. 
 A quadratic approximation is constructed via Cholesky decomposition, leading to a least-squares-type problem:
 
-\[
-\| u_* - v_*^T \beta \|^2.
-\]
+|| u* - v*^T beta ||^2
 
 Efficient coordinate-wise updates are then applied under different penalties.  
 
