@@ -224,7 +224,6 @@ arma::vec est_funcp_pic_cpp(const arma::vec& ei,
 {
   int N2 = ei.n_elem;
   int n  = std::sqrt((double)N2);
-  int p  = xij.n_cols;
 
   // -----------------------------
   // 1. z 처리 (Optional)
@@ -457,7 +456,6 @@ arma::mat Sigma_funcp_pen_pic_cpp(const arma::vec&ei,
 arma::vec sifunc_pic_cpp(const arma::mat& xij,
                      const arma::mat& Sigma) {
   int npair = xij.n_rows;
-  int p = xij.n_cols;
 
   arma::vec si(npair);
   arma::mat M = xij * Sigma;
@@ -702,7 +700,6 @@ arma::vec est_func_pic_cpp(const arma::vec& ei,
                        const arma::vec& eta1j,
                        const arma::vec& si) {
   int N2 = ei.n_elem;
-  int p = xij.n_cols;
   int n = std::sqrt((double)N2);
 
   arma::vec Phi(N2);
@@ -774,7 +771,6 @@ arma::mat up_Amat_pic_cpp(const arma::vec& ei,
                       const arma::vec& eta1j,
                       const arma::vec& si) {
   const int N2 = ei.n_elem;
-  const int p  = xij.n_cols;
   const int n  = static_cast<int>(std::sqrt(static_cast<double>(N2)));
 
   arma::vec phi(N2);

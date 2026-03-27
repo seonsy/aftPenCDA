@@ -244,7 +244,6 @@ arma::mat Sigma_func_pen_cpp(const arma::vec& ei,
                          const arma::vec& tilde_beta,
                          double lambda) {
   int n = std::sqrt(ei.n_elem);
-  int p = tilde_beta.n_elem;
 
   arma::mat A = up_Amat_cpp(ei, ej, xij, di, si);
   arma::vec pen = (2 * lambda) / (arma::square(tilde_beta) + 1e-05);
@@ -268,7 +267,6 @@ arma::mat Sigma_func_pen_cpp(const arma::vec& ei,
 arma::vec sifunc_cpp(const arma::mat& xij,
                  const arma::mat& Sigma) {
   int npair = xij.n_rows;
-  int p = xij.n_cols;
 
   arma::vec si(npair);
   arma::mat M = xij * Sigma;
@@ -418,7 +416,6 @@ arma::mat Sigma_func_stable_cpp(const arma::vec& ei,
                                 const arma::mat& Gamma,
                                 const arma::vec& si,
                                 double stable_numb1) {
-  int p = xij.n_cols;
   arma::mat A = up_Amat_cpp(ei, ej, xij, di, si);
   A.diag() += stable_numb1;
   arma::mat Ainv = arma::inv(A);
@@ -443,7 +440,6 @@ arma::mat Sigma_func_pen_stable_cpp(const arma::vec& ei,
                                     const arma::vec& tilde_beta,
                                     double lambda,
                                     double stable_numb1) {
-  int p = xij.n_cols;
   arma::mat A = up_Amat_cpp(ei, ej, xij, di, si);
   arma::vec pen = (2.0*lambda) / (arma::square(tilde_beta) + 1e-5);
   A.diag() += pen;
