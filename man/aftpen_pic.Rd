@@ -46,8 +46,6 @@ coordinate descent algorithm. The default is \code{100}.}
 A list containing the following components:
 \itemize{
 \item \code{beta}: final coefficient estimate on the original scale.
-\item \code{tbeta}: coefficient estimate from the previous outer iteration
-on the original scale.
 }
 }
 \description{
@@ -72,7 +70,7 @@ censored and may correspond to left-censoring, right-censoring, or
 interval-censoring depending on the relationship between the true failure
 time and the inspection times.
 
-The function first calls the Rcpp backend \code{is_aftp_cpp()} to obtain
+The function first calls the Rcpp backend \code{is_aftp_pic_cpp()} to obtain
 an initial estimator together with gradient and Hessian information.
 A Cholesky-based transformation is then applied, followed by coordinate-wise
 penalized updates.

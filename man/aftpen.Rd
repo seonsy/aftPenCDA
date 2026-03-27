@@ -45,8 +45,6 @@ coordinate descent algorithm. The default is \code{100}.}
 A list containing the following components:
 \itemize{
 \item \code{beta}: final coefficient estimate on the original scale.
-\item \code{tbeta}: coefficient estimate from the previous outer iteration
-on the original scale.
 }
 }
 \description{

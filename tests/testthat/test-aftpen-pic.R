@@ -70,9 +70,7 @@ test_that("aftpen_pic runs and returns valid output", {
   fit <- aftpen_pic(dt, lambda = 0.1, se = "CF", type = "BAR")
 
   expect_true(is.list(fit))
-  expect_true(all(c("beta", "tbeta") %in% names(fit)))
+  expect_true("beta" %in% names(fit))
   expect_equal(length(fit$beta), 2)
-  expect_equal(length(fit$tbeta), 2)
   expect_true(all(is.finite(fit$beta)))
-  expect_true(all(is.finite(fit$tbeta)))
 })

@@ -32,12 +32,10 @@ BAR_threshold <- function(resid, lambda, n) {
 #' @keywords internal
 
 Soft <- function(z, lambda) {
-  dplyr::case_when(
-    z >  lambda ~ z - lambda,
-    z < -lambda ~ z + lambda,
-    TRUE        ~ 0
-  )
+  ifelse(z > lambda, z - lambda,
+         ifelse(z < -lambda, z + lambda, 0))
 }
+
 #' Penalized AFT estimation for right-censored data
 #'
 #' Fits a penalized accelerated failure time (AFT) model for right-censored
@@ -67,8 +65,6 @@ Soft <- function(z, lambda) {
 #' @return A list containing the following components:
 #' \itemize{
 #'   \item \code{beta}: final coefficient estimate on the original scale.
-#'   \item \code{tbeta}: coefficient estimate from the previous outer iteration
-#'   on the original scale.
 #' }
 #'
 #' @details
@@ -134,8 +130,7 @@ aftpen <- function(dt, lambda, se, type = c("BAR", "LASSO", "ALASSO", "SCAD"), r
     }
 
     return(list(
-      beta  = beta / sqrt(norm.z),
-      tbeta = beta_prev / sqrt(norm.z)
+      beta  = beta / sqrt(norm.z)
     ))
   }
 
@@ -173,8 +168,7 @@ aftpen <- function(dt, lambda, se, type = c("BAR", "LASSO", "ALASSO", "SCAD"), r
   }
 
   list(
-    beta  = beta / sqrt(norm.z),
-    tbeta = beta_prev / sqrt(norm.z)
+    beta  = beta / sqrt(norm.z)
   )
 }
 
@@ -208,8 +202,6 @@ aftpen <- function(dt, lambda, se, type = c("BAR", "LASSO", "ALASSO", "SCAD"), r
 #' @return A list containing the following components:
 #' \itemize{
 #'   \item \code{beta}: final coefficient estimate on the original scale.
-#'   \item \code{tbeta}: coefficient estimate from the previous outer iteration
-#'   on the original scale.
 #' }
 #'
 #' @details
@@ -229,7 +221,7 @@ aftpen <- function(dt, lambda, se, type = c("BAR", "LASSO", "ALASSO", "SCAD"), r
 #' interval-censoring depending on the relationship between the true failure
 #' time and the inspection times.
 #'
-#' The function first calls the Rcpp backend \code{is_aftp_cpp()} to obtain
+#' The function first calls the Rcpp backend \code{is_aftp_pic_cpp()} to obtain
 #' an initial estimator together with gradient and Hessian information.
 #' A Cholesky-based transformation is then applied, followed by coordinate-wise
 #' penalized updates.
@@ -348,8 +340,7 @@ aftpen_pic <- function(dt, lambda, se,
     }
 
     return(list(
-      beta  = beta / sqrt(norm.z),
-      tbeta = beta_prev / sqrt(norm.z)
+      beta  = beta / sqrt(norm.z)
     ))
   }
 
@@ -387,7 +378,5 @@ aftpen_pic <- function(dt, lambda, se,
   }
 
   list(
-    beta  = beta / sqrt(norm.z),
-    tbeta = beta_prev / sqrt(norm.z)
-  )
+    beta  = beta / sqrt(norm.z))
 }

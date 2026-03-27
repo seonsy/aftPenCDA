@@ -1,0 +1,219 @@
+---
+title: "Getting started with `aftPenCDA` package"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started with `aftPenCDA` package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  out.width = "100%",
+  fig.width = 7,
+  fig.height = 4,
+  fig.align = "center",
+  dpi = 150
+)
+```
+
+## Overview
+
+`aftPenCDA` is an R package for fitting penalized accelerated failure time (AFT) models using induced smoothing. The package supports variable selection for both right-censored and clustered partly interval-censored survival data.
+
+Several penalty functions are implemented, including broken adaptive ridge (BAR), LASSO, adaptive LASSO (ALASSO), and SCAD. For variance estimation, the package provides both a closed-form estimator and a perturbation-based estimator.
+
+Core computational routines are implemented in C++ via Rcpp (RcppArmadillo backend) to ensure scalability for high-dimensional settings.
+
+## Methodological background
+
+The accelerated failure time (AFT) model with rank-based estimating equations involves nonsmooth objective functions, which pose challenges for numerical optimization.
+
+Induced smoothing replaces the nonsmooth estimating equations with smooth approximations, allowing the use of gradient-based methods. This approach avoids direct optimization of nonsmooth rank-based estimating equations, significantly improving computational efficiency.
+
+This leads to a quadratic approximation of the objective function. By applying a Cholesky decomposition, the problem is transformed into a least-squares-type formulation, which enables efficient coordinate descent updates for penalized estimation in high-dimensional settings.
+
+The resulting formulation enables efficient computation even when the number of covariates is large relative to the sample size.
+
+## Installation
+
+You can install the development version of `aftPenCDA` from GitHub:
+
+```{r eval = FALSE}
+devtools::install_github("seonsy/aftPenCDA")
+```
+
+## Main functions
+
+The main functions in `aftPenCDA` are:
+
+- `aftpen()`: penalized AFT model for right-censored data
+- `aftpen_pic()`: penalized AFT model for clustered partly interval-censored data
+
+Both functions support the following penalty types:
+
+- `"BAR"`: Broken Adaptive Ridge
+- `"LASSO"`: LASSO penalty
+- `"ALASSO"`: Adaptive LASSO penalty
+- `"SCAD"`: Smoothly Clipped Absolute Deviation penalty
+
+## Example 1: Right-censored data
+
+We simulate right-censored survival data under an AFT model and fit the penalized estimator.
+
+```{r,eval=FALSE}
+library(aftPenCDA)
+
+set.seed(1)
+
+n <- 100
+p <- 10
+
+beta0 <- c(1, 1, 1, rep(0, p - 3))
+x <- matrix(rnorm(n * p), n, p)
+
+T <- exp(x %*% beta0 + rnorm(n))
+C <- rexp(n, rate = 0.5)
+
+y <- pmin(T, C)
+d <- as.numeric(T <= C)
+
+dt <- data.frame(y = y, d = d, x)
+```
+
+We fit the model using the BAR penalty.
+
+```{r,eval=FALSE}
+fit_bar <- aftpen(dt, lambda = 0.1, se = "CF", type = "BAR")
+fit_bar$beta
+```
+
+Other penalties are also available.
+
+```{r,eval=FALSE}
+fit_lasso  <- aftpen(dt, lambda = 0.1, se = "CF", type = "LASSO")
+fit_alasso <- aftpen(dt, lambda = 0.1, se = "CF", type = "ALASSO")
+fit_scad   <- aftpen(dt, lambda = 0.1, se = "CF", type = "SCAD")
+```
+
+## Example 2: Clustered partly interval-censored data
+
+We generate clustered partly interval-censored data and apply the proposed method.
+
+```{r,eval=FALSE}
+set.seed(1)
+
+## simplified generator for clustered partly interval-censored data
+n <- 100
+p <- 2
+beta0 <- c(1, 1)
+clu_rate <- 0.5
+exactrates <- 0.8
+left <- 0.001
+right <- 0.01
+
+## cluster-level frailty and informative cluster sizes
+eta <- 1 / clu_rate
+v <- rgamma(n, shape = eta, rate = eta)
+m <- ifelse(v > median(v), 5, 3)
+id <- rep(seq_len(n), m)
+vi <- rep(v, m)
+
+## subject-level covariates and failure times
+N <- sum(m)
+x <- matrix(rnorm(N * p), ncol = p)
+colnames(x) <- paste0("x", seq_len(p))
+
+T <- as.vector(exp(x %*% beta0 + vi * log(rexp(N))))
+
+## build (L, R, delta)
+L <- R <- delta <- numeric(N)
+index <- rbinom(N, 1, exactrates)
+
+for (i in seq_len(N)) {
+  if (index[i] == 1) {
+    L[i] <- T[i]
+    R[i] <- T[i]
+    delta[i] <- 1
+  } else {
+    U <- cumsum(c(1e-8, runif(10, left, right)))
+    LL <- U[-length(U)]
+    RR <- U[-1]
+
+    if (T[i] < min(LL)) {
+      L[i] <- 1e-8
+      R[i] <- min(LL)
+      delta[i] <- 0
+    } else if (T[i] > max(RR)) {
+      L[i] <- max(RR)
+      R[i] <- 1e8
+      delta[i] <- 0
+    } else {
+      idd <- which(T[i] > LL & T[i] < RR)
+
+      if (length(idd) == 1) {
+        L[i] <- LL[idd]
+        R[i] <- RR[idd]
+        delta[i] <- 0
+      } else {
+        L[i] <- T[i]
+        R[i] <- T[i]
+        delta[i] <- 1
+      }
+    }
+  }
+}
+
+dt_pic <- data.frame(
+  L = L,
+  R = R,
+  delta = delta,
+  id = id,
+  x1 = x[, 1],
+  x2 = x[, 2]
+)
+```
+
+We fit the model using the BAR penalty.
+
+```{r,eval=FALSE}
+fit_pic <- aftpen_pic(dt_pic, lambda = 0.1, se = "CF", type = "BAR")
+fit_pic$beta
+```
+
+Other penalties are also available for partly interval-censored data.
+
+```{r,eval=FALSE}
+fit_pic_lasso  <- aftpen_pic(dt_pic, lambda = 0.1, se = "CF", type = "LASSO")
+fit_pic_alasso <- aftpen_pic(dt_pic, lambda = 0.1, se = "CF", type = "ALASSO")
+fit_pic_scad   <- aftpen_pic(dt_pic, lambda = 0.1, se = "CF", type = "SCAD")
+```
+
+## Variance estimation
+
+The argument `se` specifies the variance estimation method.
+
+- `"CF"`: closed-form estimator
+- `"ZL"`: perturbation-based estimator
+
+For example:
+
+```{r,eval=FALSE}
+fit_zl <- aftpen(dt, lambda = 0.1, se = "ZL", type = "BAR")
+```
+
+## References
+
+Wang, You-Gan, and Yudong Zhao (2008). “Weighted Rank Regression for Clustered Data Analysis.” *Biometrics* **64**(1), 39--45.
+
+Dai, L., K. Chen, Z. Sun, Z. Liu, and G. Li (2018). “Broken Adaptive Ridge Regression and Its Asymptotic Properties.” *Journal of Multivariate Analysis* **168**, 334--351.
+
+Zeng, Donglin, and D. Y. Lin (2008).“Efficient Resampling Methods for Nonsmooth Estimating Functions.” *Biostatistics* **9**(2), 355--363.
+
+Tibshirani, Robert (1996).“Regression Shrinkage and Selection via the Lasso.” *Journal of the Royal Statistical Society: Series B* **58**(1), 267--288.
+
+Fan, Jianqing, and Runze Li (2001). “Variable Selection via Nonconcave Penalized Likelihood and Its Oracle Properties.” *Journal of the American Statistical Association* **96**(456), 1348--1360.
+
+Zou, Hui (2006).“The Adaptive Lasso and Its Oracle Properties.” *Journal of the American Statistical Association* **101**(476), 1418--1429.

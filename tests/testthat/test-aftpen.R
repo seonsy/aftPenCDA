@@ -16,7 +16,6 @@ test_that("aftpen runs and returns beta", {
 
   expect_true(is.list(fit))
   expect_true("beta" %in% names(fit))
-  expect_true("tbeta" %in% names(fit))
-  expect_equal(length(fit$beta), p)
+  expect_equal(length(fit$beta), 10)
   expect_true(all(is.finite(fit$beta)))
 })
