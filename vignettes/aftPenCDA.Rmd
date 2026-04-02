@@ -108,7 +108,7 @@ set.seed(1)
 ## simplified generator for clustered partly interval-censored data
 n <- 100
 p <- 2
-beta0 <- c(1, 1)
+beta0 <- c(1,1)
 clu_rate <- 0.5
 exactrates <- 0.8
 left <- 0.001
@@ -179,16 +179,16 @@ dt_pic <- data.frame(
 We fit the model using the BAR penalty.
 
 ```{r,eval=FALSE}
-fit_pic <- aftpen_pic(dt_pic, lambda = 0.1, se = "CF", type = "BAR")
+fit_pic <- aftpen_pic(dt_pic, lambda = 0.0005, se = "CF", type = "BAR")
 fit_pic$beta
 ```
 
 Other penalties are also available for partly interval-censored data.
 
 ```{r,eval=FALSE}
-fit_pic_lasso  <- aftpen_pic(dt_pic, lambda = 0.1, se = "CF", type = "LASSO")
-fit_pic_alasso <- aftpen_pic(dt_pic, lambda = 0.1, se = "CF", type = "ALASSO")
-fit_pic_scad   <- aftpen_pic(dt_pic, lambda = 0.1, se = "CF", type = "SCAD")
+fit_pic_lasso  <- aftpen_pic(dt_pic, lambda = 0.001, se = "CF", type = "LASSO")
+fit_pic_alasso <- aftpen_pic(dt_pic, lambda = 0.001, se = "CF", type = "ALASSO")
+fit_pic_scad   <- aftpen_pic(dt_pic, lambda = 0.001, se = "CF", type = "SCAD")
 ```
 
 ## Variance estimation

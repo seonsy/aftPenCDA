@@ -80,13 +80,12 @@ For \code{type = "BAR"}, the update uses the internal
 \code{"ALASSO"}, and \code{"SCAD"}, soft-thresholding-based updates are used.
 }
 \examples{
-\dontrun{
 set.seed(1)
 
 ## simplified generator for clustered partly interval-censored data
-n <- 100
+n <- 50
 p <- 2
-beta0 <- c(1,1)
+beta0 <- c(1, 1)
 clu_rate <- 0.5
 exactrates <- 0.8
 left <- 0.001
@@ -146,7 +145,7 @@ dt <- data.frame(
   x1 = x[, 1], x2 = x[, 2]
 )
 
-fit <- aftpen_pic(dt, lambda = 0.1, se = "CF", type = "BAR")
+fit <- aftpen_pic(dt, lambda = 0.001, se = "CF", type = "BAR")
 fit$beta
-}
+
 }

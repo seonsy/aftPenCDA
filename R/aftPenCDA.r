@@ -76,10 +76,9 @@ Soft <- function(z, lambda) {
 #' For \code{type = "BAR"}, the update uses the internal \code{BAR_threshold()} operator.
 #' For \code{type = "LASSO"}, \code{"ALASSO"}, and \code{"SCAD"}, soft-thresholding-based updates are used.
 #' @examples
-#' \dontrun{
 #' n = 100
-#' p = 5
-#' beta0 = rep(1,p)
+#' p = 10
+#' beta0 = c(rep(1,3),rep(0,7))
 #' x = matrix(rnorm(n * p), n, p)
 #' T = exp(x%*%beta0 + rnorm(n))
 #' C = rexp(n, rate = exp(-2))
@@ -88,8 +87,6 @@ Soft <- function(z, lambda) {
 #' dt = data.frame(y,d,x)
 #' fit <- aftpen(dt, lambda = 0.1, se = "CF", type = "BAR")
 #' fit$beta
-#' }
-#'
 #' @export
 aftpen <- function(dt, lambda, se, type = c("BAR", "LASSO", "ALASSO", "SCAD"), r = 3.7, eps = 1e-8, max.iter = 100) {
   type <- match.arg(type)
@@ -230,13 +227,12 @@ aftpen <- function(dt, lambda, se, type = c("BAR", "LASSO", "ALASSO", "SCAD"), r
 #' \code{BAR_threshold()} operator. For \code{"LASSO"},
 #' \code{"ALASSO"}, and \code{"SCAD"}, soft-thresholding-based updates are used.
 #' @examples
-#' \dontrun{
 #' set.seed(1)
 #'
 #' ## simplified generator for clustered partly interval-censored data
-#' n <- 100
+#' n <- 50
 #' p <- 2
-#' beta0 <- c(1,1)
+#' beta0 <- c(1, 1)
 #' clu_rate <- 0.5
 #' exactrates <- 0.8
 #' left <- 0.001
@@ -296,9 +292,9 @@ aftpen <- function(dt, lambda, se, type = c("BAR", "LASSO", "ALASSO", "SCAD"), r
 #'   x1 = x[, 1], x2 = x[, 2]
 #' )
 #'
-#' fit <- aftpen_pic(dt, lambda = 0.1, se = "CF", type = "BAR")
+#' fit <- aftpen_pic(dt, lambda = 0.001, se = "CF", type = "BAR")
 #' fit$beta
-#' }
+#'
 #' @export
 aftpen_pic <- function(dt, lambda, se,
                          type = c("BAR", "LASSO", "ALASSO", "SCAD"), r = 3.7, eps = 1e-8, max.iter = 100) {

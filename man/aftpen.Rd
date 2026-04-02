@@ -62,10 +62,9 @@ For \code{type = "BAR"}, the update uses the internal \code{BAR_threshold()} ope
 For \code{type = "LASSO"}, \code{"ALASSO"}, and \code{"SCAD"}, soft-thresholding-based updates are used.
 }
 \examples{
-\dontrun{
 n = 100
-p = 5
-beta0 = rep(1,p)
+p = 10
+beta0 = c(rep(1,3),rep(0,7))
 x = matrix(rnorm(n * p), n, p)
 T = exp(x\%*\%beta0 + rnorm(n))
 C = rexp(n, rate = exp(-2))
@@ -74,6 +73,4 @@ y = pmin(T,C)
 dt = data.frame(y,d,x)
 fit <- aftpen(dt, lambda = 0.1, se = "CF", type = "BAR")
 fit$beta
-}
-
 }
