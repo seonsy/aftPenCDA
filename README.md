@@ -39,7 +39,7 @@ library(aftPenCDA)
 library(aftPenCDA)
 
 data("simdat_rc")
-fit <- aftpen(simdat_rc, lambda = 0.1)
+fit <- aftpen(simdat_rc, lambda = 0.1, se="CF", type="BAR")
 
 fit$beta
 ```
