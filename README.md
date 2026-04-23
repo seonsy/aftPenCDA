@@ -1,6 +1,6 @@
 # aftPenCDA
 
-`aftPenCDA` is an R package for fitting penalized accelerated failure time (AFT) models using induced smoothing and coordinate descent algorithms. Computationally intensive components are implemented in C++ via Rcpp (RcppArmadillo backend) to ensure scalability in high-dimensional settings.
+`aftPenCDA` is an R package for fitting penalized accelerated failure time (AFT) models using induced smoothing and coordinate descent algorithms. Computationally intensive components are implemented in 'C++' via 'Rcpp' (RcppArmadillo backend) to ensure scalability in high-dimensional settings.
 
 The package supports both right-censored survival data and clustered partly interval-censored survival data, and provides flexible variable selection through several penalty functions.
 
@@ -70,34 +70,30 @@ aftpen_pic(dt, lambda = 0.1, se = "CF", type = "BAR")
 ## Algorithm
 
 The method combines induced smoothing with a coordinate descent algorithm. 
-A quadratic approximation is constructed via Cholesky decomposition, leading to a least-squares-type problem
+A quadratic approximation is constructed via Cholesky decomposition, leading to a least-squares-type problem.
 
-Efficient coordinate-wise updates are then applied under different penalties.  
+Efficient coordinate-wise updates are then applied under different penalties.
 
 ## Example
 
+### Right-censored data
 ```r
 library(aftPenCDA)
 
-set.seed(1)
+data("simdat_rc")
 
-n <- 100
-p <- 5
-beta0 <- rep(1, p)
-
-x <- matrix(rnorm(n * p), n, p)
-
-T <- exp(x %*% beta0 + rnorm(n))
-C <- rexp(n, rate = exp(-2))
-
-d <- 1 * (T < C)
-y <- pmin(T, C)
-
-dt <- data.frame(y = y, d = d, x)
-
-fit <- aftpen(dt, lambda = 0.1, se = "CF", type = "BAR")
+fit <- aftpen(simdat_rc, lambda = 0.1, se = "CF", type = "BAR")
 
 fit$beta
+```
+
+### Clustered partly interval-censored data
+```r
+data("simdat_pic")
+
+fit_pic <- aftpen_pic(simdat_pic, lambda = 0.001, se = "CF", type = "BAR")
+
+fit_pic$beta
 ```
 
 ## Arguments
