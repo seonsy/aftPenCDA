@@ -1,5 +1,6 @@
-# aftPenCDA
+[![CRAN status](https://www.r-pkg.org/badges/version/aftPenCDA)](https://CRAN.R-project.org/package=aftPenCDA)
 
+# aftPenCDA
 `aftPenCDA` is an R package for fitting penalized accelerated failure time (AFT) models using induced smoothing and coordinate descent algorithms. Computationally intensive components are implemented in 'C++' via 'Rcpp' (RcppArmadillo backend) to ensure scalability in high-dimensional settings.
 
 The package supports both right-censored survival data and clustered partly interval-censored survival data, and provides flexible variable selection through several penalty functions.
@@ -25,12 +26,24 @@ The package supports both right-censored survival data and clustered partly inte
 
 ## Installation
 
-You can install the development version from GitHub:
+### From CRAN
 
 ```r
-# install.packages("devtools")
-devtools::install_github("seonsy/aftPenCDA")
+install.packages("aftPenCDA")
+library(aftPenCDA)
 ```
+
+## Quick start
+
+```r
+library(aftPenCDA)
+
+data("simdat_rc")
+fit <- aftpen(simdat_rc, lambda = 0.1)
+
+fit$beta
+```
+
 
 ## Main functions
 
@@ -122,7 +135,3 @@ Dai, L., K. Chen, Z. Sun, Z. Liu, and G. Li. 2018. “Broken Adaptive Ridge Regr
 Zeng, Donglin, and D. Y. Lin. 2008. “Efficient Resampling Methods for Nonsmooth Estimating Functions.” *Biostatistics* 9 (2): 355–363.
 
 
-
-## Note
-
-This package is under development. Functionality and interfaces may change in future versions.
